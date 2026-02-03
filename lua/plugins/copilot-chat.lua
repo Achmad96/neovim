@@ -4,12 +4,22 @@ return {
     opts = {
       -- model = "claude-sonnet-4.5",
       model = "claude-haiku-4.5",
+      -- model = "gpt-4o",
+      -- model = "gemini-1.5-pro",
       -- Show help and prompts in a floating window/split
       window = {
         layout = "vertical", -- 'vertical', 'horizontal', 'float', 'replace'
         width = 0.4,
       },
     },
+    config = function()
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "markdown",
+        callback = function()
+          vim.cmd("highlight link markdownError NONE")
+        end,
+      })
+    end,
     keys = {
       -- Toggle chat window
       {
@@ -18,6 +28,7 @@ return {
         mode = { "n" },
         desc = "CopilotChat - Toggle",
       },
+
       -- Save the current chat history with a custom name
       {
         "<leader>as",
@@ -29,6 +40,7 @@ return {
         end,
         desc = "CopilotChat - Save History",
       },
+
       -- Load a saved chat history
       {
         "<leader>al",
@@ -40,7 +52,6 @@ return {
             print("No history found")
             return
           end
-
           -- Use Neovim's built-in select menu to pick a file
           local files = vim.fn.readdir(history_path)
           vim.ui.select(files, { prompt = "Select Chat History:" }, function(selected)
@@ -51,6 +62,7 @@ return {
         end,
         desc = "CopilotChat - Browse History",
       },
+
       -- Clear the current chat history
       {
         "<leader>ax",
@@ -58,6 +70,7 @@ return {
         mode = { "n" },
         desc = "CopilotChat - Reset",
       },
+
       -- Generate a commit message for the current changes
       {
         "<leader>am",
@@ -65,6 +78,7 @@ return {
         mode = { "n" },
         desc = "CopilotChat - Generate Commit Message",
       },
+
       -- Custom prompt: Explain the selected code
       {
         "<leader>ae",
@@ -72,6 +86,7 @@ return {
         mode = { "n", "v" },
         desc = "CopilotChat - Explain Code",
       },
+
       -- Optimize codes
       {
         "<leader>ao",
@@ -79,6 +94,7 @@ return {
         mode = { "n", "v" },
         desc = "CopilotChat - Optimize Code",
       },
+
       -- Fix codes
       {
         "<leader>af",
@@ -86,6 +102,7 @@ return {
         mode = { "n", "v" },
         desc = "CopilotChat - Fix Code",
       },
+
       -- Generate Test codes
       {
         "<leader>at",
@@ -93,6 +110,7 @@ return {
         mode = { "n", "v" },
         desc = "CopilotChat - Generate Tests",
       },
+
       -- Generate Documentation
       {
         "<leader>ad",
@@ -100,6 +118,7 @@ return {
         mode = { "n", "v" },
         desc = "CopilotChat - Write Documentation",
       },
+
       -- Review the current code and suggest improvements
       {
         "<leader>ar",
@@ -107,6 +126,7 @@ return {
         mode = { "n", "v" },
         desc = "CopilotChat - Review Code",
       },
+
       -- Quick Chat (opens a prompt input)
       {
         "<leader>aq",
@@ -121,6 +141,7 @@ return {
         end,
         desc = "CopilotChat - Quick Chat",
       },
+
     },
   },
 }
