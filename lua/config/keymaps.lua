@@ -36,10 +36,28 @@ map("n", "<leader>sh", "<cmd>split<cr>", { desc = "Split Horizontally" })
 map("n", "<leader>sx", "<cmd>close<cr>", { desc = "Close Split" })
 
 
--- 3. BUFFER MANAGEMENT (Optional but recommended)
+-- 3. BUFFER MANAGEMENT
 -- Often when people say "close tab" in generic editors, they mean "close file".
 -- LazyVim default for this is <leader>bd (Buffer Delete).
 -- You can map it to something simpler like <leader>x if you prefer:
 map("n", "<leader>x", "<cmd>bd<cr>", { desc = "Close Buffer/File" })
 -- Pressing <leader>rs will source the current file
 map("n", "<leader>rs", ":source %<CR>:echo 'Sourced current file!'<CR>")
+-- Pressing <leader>tt will open a terminal
+map("n", "<leader>tt", "<cmd>:terminal<cr>", { desc = "Open a Terminal" })
+-- Custom keymap to send all open buffers to CopilotChat
+map("n", "<leader>ab", function()
+  local chat = require("CopilotChat")
+  local bufs = vim.api.nvim_list_bufs()
+  local context = {}
+  for _, bufnr in ipairs(bufs) do
+    if vim.api.nvim_buf_is_loaded(bufnr) and vim.bo[bufnr].buflisted then
+      local name = vim.api.nvim_buf_get_name(bufnr)
+      local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+      table.insert(context, "File: " .. name .. "\n\n" .. table.concat(lines, "\n"))
+    end
+  end
+
+  local context_text = table.concat(context, "\n\n---\n\n")
+  chat.ask("Based on the following code context:\n\n" .. context_text .. "\n\n[Your Question Here]")
+end, { desc = "CopilotChat: Ask with all open buffers" })

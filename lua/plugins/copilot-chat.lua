@@ -11,6 +11,24 @@ return {
         layout = "vertical", -- 'vertical', 'horizontal', 'float', 'replace'
         width = 0.4,
       },
+      contexts = {
+        file_glob = {
+          input = function(callback)
+            vim.ui.input({ prompt = "Enter glob pattern: " }, callback)
+          end,
+          resolve = function(input)
+            local files = vim.fn.glob(input, false, true)
+            local resources = {}
+            for _, file in ipairs(files) do
+              table.insert(resources, {
+                path = file,
+                content = table.concat(vim.fn.readfile(file), "\n"),
+              })
+            end
+            return resources
+          end,
+        },
+      },
     },
     config = function()
       vim.api.nvim_create_autocmd("FileType", {
@@ -133,15 +151,14 @@ return {
         function()
           local input = vim.fn.input("Quick Chat: ")
           if input ~= "" then
+            -- The modern way: provide the selection helper directly
             require("CopilotChat").ask(input, {
-              -- The modern way: provide the selection helper directly
-              selection = require("CopilotChat.#select").buffer,
+              selection = require("CopilotChat.select").buffer,
             })
           end
         end,
         desc = "CopilotChat - Quick Chat",
       },
-
     },
   },
 }
